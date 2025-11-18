@@ -6,12 +6,17 @@ server:
   port: 8484
   servlet:
     context-path: /registration/v1
+
 spring:
+  application:
+    name: user-registration-backend
+
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: hr
-    url: jdbc:postgresql://localhost:5432/registration
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/registration}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:hr}
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,16 +27,13 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
-    show-sql: true
-   
-   
+    show-sql: ${SHOW_SQL:true}
 
   mail:
-    host: localhost
-    port: 1025
-    username: hello
-    password: hello
-
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:hello}
+    password: ${MAIL_PASSWORD:hello}
     properties:
       mail:
         smtp:
@@ -43,3 +45,34 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+
+# JWT Configuration
+jwt:
+  secret-key: ${JWT_SECRET_KEY:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration: ${JWT_EXPIRATION:86400000} # 24 hours in milliseconds
+  refresh-token:
+    expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 days in milliseconds
+
+# Email Confirmation
+app:
+  email:
+    confirmation-url: ${CONFIRMATION_URL:http://localhost:8484/registration/v1/api/v1/registration/confirm}
+    token-expiration-minutes: ${TOKEN_EXPIRATION:15}
+
+# Logging
+logging:
+  level:
+    com.example.demo: ${LOG_LEVEL:INFO}
+    org.springframework.security: ${LOG_LEVEL:INFO}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# SpringDoc OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
